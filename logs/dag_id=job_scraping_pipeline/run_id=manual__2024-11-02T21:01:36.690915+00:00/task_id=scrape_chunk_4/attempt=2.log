@@ -1,0 +1,221 @@
+[2024-11-03T07:12:02.638+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2024-11-03T07:12:02.650+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: job_scraping_pipeline.scrape_chunk_4 manual__2024-11-02T21:01:36.690915+00:00 [queued]>
+[2024-11-03T07:12:02.659+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: job_scraping_pipeline.scrape_chunk_4 manual__2024-11-02T21:01:36.690915+00:00 [queued]>
+[2024-11-03T07:12:02.659+0000] {taskinstance.py:2865} INFO - Starting attempt 2 of 4
+[2024-11-03T07:12:02.676+0000] {taskinstance.py:2888} INFO - Executing <Task(PythonOperator): scrape_chunk_4> on 2024-11-02 21:01:36.690915+00:00
+[2024-11-03T07:12:02.690+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'job_scraping_pipeline', 'scrape_chunk_4', 'manual__2024-11-02T21:01:36.690915+00:00', '--job-id', '79', '--raw', '--subdir', 'DAGS_FOLDER/test.py', '--cfg-path', '/tmp/tmpo92ac5om']
+[2024-11-03T07:12:02.693+0000] {standard_task_runner.py:105} INFO - Job 79: Subtask scrape_chunk_4
+[2024-11-03T07:12:02.695+0000] {logging_mixin.py:190} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:70 DeprecationWarning: This process (pid=451) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2024-11-03T07:12:02.695+0000] {standard_task_runner.py:72} INFO - Started process 456 to run task
+[2024-11-03T07:12:02.739+0000] {task_command.py:467} INFO - Running <TaskInstance: job_scraping_pipeline.scrape_chunk_4 manual__2024-11-02T21:01:36.690915+00:00 [running]> on host 6fb5d61061dc
+[2024-11-03T07:12:02.825+0000] {taskinstance.py:3131} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='job_scraping_pipeline' AIRFLOW_CTX_TASK_ID='scrape_chunk_4' AIRFLOW_CTX_EXECUTION_DATE='2024-11-02T21:01:36.690915+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-11-02T21:01:36.690915+00:00'
+[2024-11-03T07:12:02.826+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2024-11-03T07:12:02.845+0000] {main_scrap.py:56} INFO - 初始化完成，輸出目錄: jobs_csv
+[2024-11-03T07:12:02.846+0000] {main_scrap.py:94} INFO - 開始爬取關鍵字: 雲端資安
+[2024-11-03T07:12:02.847+0000] {main_scrap.py:77} INFO - 請求URL: https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword=%E9%9B%B2%E7%AB%AF%E8%B3%87%E5%AE%89&order=15&asc=0&page=1&mode=s&jobsource=m_joblist_search&searchTempExclude=2
+[2024-11-03T07:12:03.429+0000] {main_scrap.py:107} INFO - 開始爬取關鍵字: 雲端資安, 共有：26 頁
+[2024-11-03T07:12:03.436+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:   0%|          | 0/26 [00:00<?, ?it/s]
+[2024-11-03T07:12:03.436+0000] {main_scrap.py:112} INFO - 頁面 1 延遲 9.70 秒
+[2024-11-03T07:12:26.678+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.82 秒
+[2024-11-03T07:12:41.952+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.31 秒
+[2024-11-03T07:13:07.929+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.76 秒
+[2024-11-03T07:13:37.040+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.20 秒
+[2024-11-03T07:14:01.732+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.82 秒
+[2024-11-03T07:14:15.328+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.54 秒
+[2024-11-03T07:14:30.872+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.66 秒
+[2024-11-03T07:14:45.846+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.64 秒
+[2024-11-03T07:15:06.293+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.72 秒
+[2024-11-03T07:15:30.143+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.39 秒
+[2024-11-03T07:15:46.931+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.72 秒
+[2024-11-03T07:16:01.481+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.76 秒
+[2024-11-03T07:16:17.566+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.00 秒
+[2024-11-03T07:16:44.139+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.86 秒
+[2024-11-03T07:17:07.133+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.06 秒
+[2024-11-03T07:17:40.171+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.04 秒
+[2024-11-03T07:17:59.877+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.80 秒
+[2024-11-03T07:18:21.175+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.13 秒
+[2024-11-03T07:18:52.612+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.24 秒
+[2024-11-03T07:19:06.067+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.93 秒
+[2024-11-03T07:19:35.824+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.00 秒
+[2024-11-03T07:19:57.642+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.43 秒
+[2024-11-03T07:20:11.074+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:   4%|3         | 1/26 [08:07<3:23:10, 487.64s/it]
+[2024-11-03T07:20:11.074+0000] {main_scrap.py:112} INFO - 頁面 2 延遲 13.90 秒
+[2024-11-03T07:20:36.316+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.52 秒
+[2024-11-03T07:20:57.518+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.74 秒
+[2024-11-03T07:21:29.265+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.27 秒
+[2024-11-03T07:22:02.429+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.16 秒
+[2024-11-03T07:22:33.512+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.53 秒
+[2024-11-03T07:23:05.258+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.66 秒
+[2024-11-03T07:23:19.755+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.51 秒
+[2024-11-03T07:23:41.726+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.05 秒
+[2024-11-03T07:24:13.228+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.37 秒
+[2024-11-03T07:24:33.147+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.56 秒
+[2024-11-03T07:24:53.007+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.44 秒
+[2024-11-03T07:25:18.845+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.21 秒
+[2024-11-03T07:25:50.329+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.16 秒
+[2024-11-03T07:26:10.670+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.21 秒
+[2024-11-03T07:26:39.123+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.90 秒
+[2024-11-03T07:27:07.130+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.02 秒
+[2024-11-03T07:27:24.229+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.44 秒
+[2024-11-03T07:27:57.193+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.23 秒
+[2024-11-03T07:28:25.759+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.14 秒
+[2024-11-03T07:28:48.601+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.08 秒
+[2024-11-03T07:29:03.683+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:   8%|7         | 2/26 [17:00<3:25:38, 514.09s/it]
+[2024-11-03T07:29:03.683+0000] {main_scrap.py:112} INFO - 頁面 3 延遲 16.99 秒
+[2024-11-03T07:29:32.158+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.72 秒
+[2024-11-03T07:30:00.429+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.80 秒
+[2024-11-03T07:30:23.816+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.01 秒
+[2024-11-03T07:30:45.375+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.77 秒
+[2024-11-03T07:31:02.969+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.40 秒
+[2024-11-03T07:31:35.157+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.49 秒
+[2024-11-03T07:31:55.090+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.91 秒
+[2024-11-03T07:32:12.494+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.50 秒
+[2024-11-03T07:32:32.314+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.18 秒
+[2024-11-03T07:32:52.612+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.08 秒
+[2024-11-03T07:33:12.655+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.73 秒
+[2024-11-03T07:33:29.911+0000] {main_scrap.py:151} INFO - 職位詳情延遲 14.70 秒
+[2024-11-03T07:33:50.295+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.16 秒
+[2024-11-03T07:34:16.973+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.15 秒
+[2024-11-03T07:34:32.529+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.09 秒
+[2024-11-03T07:34:47.120+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.28 秒
+[2024-11-03T07:35:10.964+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.20 秒
+[2024-11-03T07:35:40.740+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.97 秒
+[2024-11-03T07:36:01.718+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.89 秒
+[2024-11-03T07:36:16.396+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.08 秒
+[2024-11-03T07:36:26.474+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  12%|#1        | 3/26 [24:23<3:04:35, 481.53s/it]
+[2024-11-03T07:36:26.474+0000] {main_scrap.py:112} INFO - 頁面 4 延遲 8.49 秒
+[2024-11-03T07:36:50.663+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.92 秒
+[2024-11-03T07:37:11.829+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.49 秒
+[2024-11-03T07:37:31.488+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.73 秒
+[2024-11-03T07:37:52.995+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.46 秒
+[2024-11-03T07:38:16.427+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.19 秒
+[2024-11-03T07:38:46.651+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.28 秒
+[2024-11-03T07:39:09.484+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.61 秒
+[2024-11-03T07:39:28.154+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.23 秒
+[2024-11-03T07:39:57.919+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.37 秒
+[2024-11-03T07:40:13.866+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.32 秒
+[2024-11-03T07:40:41.542+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.94 秒
+[2024-11-03T07:41:00.824+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.73 秒
+[2024-11-03T07:41:19.729+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.75 秒
+[2024-11-03T07:41:47.060+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.85 秒
+[2024-11-03T07:42:20.214+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.83 秒
+[2024-11-03T07:42:42.995+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.06 秒
+[2024-11-03T07:43:03.889+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.12 秒
+[2024-11-03T07:43:27.027+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.60 秒
+[2024-11-03T07:43:50.922+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.22 秒
+[2024-11-03T07:44:07.234+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.50 秒
+[2024-11-03T07:44:19.740+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  15%|#5        | 4/26 [32:16<2:55:21, 478.27s/it]
+[2024-11-03T07:44:19.740+0000] {main_scrap.py:112} INFO - 頁面 5 延遲 17.20 秒
+[2024-11-03T07:44:45.545+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.50 秒
+[2024-11-03T07:45:01.134+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.88 秒
+[2024-11-03T07:45:29.491+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.79 秒
+[2024-11-03T07:45:56.277+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.68 秒
+[2024-11-03T07:46:14.003+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.85 秒
+[2024-11-03T07:46:40.936+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.36 秒
+[2024-11-03T07:47:11.328+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.04 秒
+[2024-11-03T07:47:43.653+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.52 秒
+[2024-11-03T07:48:07.781+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.69 秒
+[2024-11-03T07:48:22.411+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.61 秒
+[2024-11-03T07:48:46.504+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.49 秒
+[2024-11-03T07:48:59.067+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.24 秒
+[2024-11-03T07:49:21.819+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.71 秒
+[2024-11-03T07:49:47.482+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.39 秒
+[2024-11-03T07:50:03.122+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.58 秒
+[2024-11-03T07:50:28.752+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.05 秒
+[2024-11-03T07:50:58.176+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.73 秒
+[2024-11-03T07:51:17.833+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.69 秒
+[2024-11-03T07:51:35.866+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.12 秒
+[2024-11-03T07:51:47.245+0000] {main_scrap.py:151} INFO - 職位詳情延遲 14.19 秒
+[2024-11-03T07:52:01.436+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  19%|#9        | 5/26 [39:57<2:45:18, 472.29s/it]
+[2024-11-03T07:52:01.436+0000] {main_scrap.py:112} INFO - 頁面 6 延遲 17.62 秒
+[2024-11-03T07:52:34.763+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.03 秒
+[2024-11-03T07:52:53.838+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.99 秒
+[2024-11-03T07:53:13.407+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.48 秒
+[2024-11-03T07:53:41.756+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.06 秒
+[2024-11-03T07:54:13.135+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.26 秒
+[2024-11-03T07:54:35.446+0000] {main_scrap.py:151} INFO - 職位詳情延遲 14.61 秒
+[2024-11-03T07:55:00.265+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.06 秒
+[2024-11-03T07:55:15.070+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.38 秒
+[2024-11-03T07:55:33.905+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.85 秒
+[2024-11-03T07:55:55.904+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.12 秒
+[2024-11-03T07:56:17.972+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.82 秒
+[2024-11-03T07:56:36.882+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.81 秒
+[2024-11-03T07:57:05.075+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.81 秒
+[2024-11-03T07:57:31.366+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.66 秒
+[2024-11-03T07:57:59.063+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.83 秒
+[2024-11-03T07:58:18.581+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.07 秒
+[2024-11-03T07:58:36.851+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.81 秒
+[2024-11-03T07:59:03.897+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.61 秒
+[2024-11-03T07:59:30.096+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.93 秒
+[2024-11-03T07:59:49.095+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.47 秒
+[2024-11-03T08:00:05.569+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  23%|##3       | 6/26 [48:02<2:38:46, 476.32s/it]
+[2024-11-03T08:00:05.569+0000] {main_scrap.py:112} INFO - 頁面 7 延遲 14.37 秒
+[2024-11-03T08:00:31.843+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.67 秒
+[2024-11-03T08:00:50.258+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.39 秒
+[2024-11-03T08:01:12.508+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.35 秒
+[2024-11-03T08:01:33.300+0000] {main_scrap.py:151} INFO - 職位詳情延遲 7.71 秒
+[2024-11-03T08:01:55.544+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.33 秒
+[2024-11-03T08:02:15.759+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.86 秒
+[2024-11-03T08:02:28.737+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.65 秒
+[2024-11-03T08:02:56.362+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.37 秒
+[2024-11-03T08:03:21.031+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.18 秒
+[2024-11-03T08:03:51.780+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.65 秒
+[2024-11-03T08:04:20.149+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.85 秒
+[2024-11-03T08:04:44.562+0000] {main_scrap.py:151} INFO - 職位詳情延遲 12.20 秒
+[2024-11-03T08:05:06.889+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.95 秒
+[2024-11-03T08:05:36.794+0000] {main_scrap.py:151} INFO - 職位詳情延遲 9.17 秒
+[2024-11-03T08:05:53.047+0000] {main_scrap.py:151} INFO - 職位詳情延遲 6.54 秒
+[2024-11-03T08:06:05.122+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.81 秒
+[2024-11-03T08:06:31.592+0000] {main_scrap.py:151} INFO - 職位詳情延遲 17.34 秒
+[2024-11-03T08:06:59.563+0000] {main_scrap.py:151} INFO - 職位詳情延遲 10.49 秒
+[2024-11-03T08:07:16.832+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.38 秒
+[2024-11-03T08:07:43.905+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.81 秒
+[2024-11-03T08:08:00.715+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  27%|##6       | 7/26 [55:57<2:30:42, 475.94s/it]
+[2024-11-03T08:08:00.715+0000] {main_scrap.py:112} INFO - 頁面 8 延遲 16.93 秒
+[2024-11-03T08:08:33.160+0000] {main_scrap.py:151} INFO - 職位詳情延遲 18.99 秒
+[2024-11-03T08:09:02.941+0000] {main_scrap.py:151} INFO - 職位詳情延遲 13.50 秒
+[2024-11-03T08:09:22.878+0000] {main_scrap.py:151} INFO - 職位詳情延遲 15.08 秒
+[2024-11-03T08:09:51.368+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.71 秒
+[2024-11-03T08:10:08.198+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.76 秒
+[2024-11-03T08:10:27.731+0000] {main_scrap.py:151} INFO - 職位詳情延遲 14.25 秒
+[2024-11-03T08:10:48.575+0000] {main_scrap.py:151} INFO - 職位詳情延遲 16.33 秒
+[2024-11-03T08:11:10.515+0000] {main_scrap.py:151} INFO - 職位詳情延遲 8.06 秒
+[2024-11-03T08:11:27.675+0000] {main_scrap.py:151} INFO - 職位詳情延遲 11.35 秒
+[2024-11-03T08:11:52.149+0000] {main_scrap.py:151} INFO - 職位詳情延遲 19.40 秒
+[2024-11-03T08:12:02.827+0000] {timeout.py:68} ERROR - Process timed out, PID: 456
+[2024-11-03T08:12:02.827+0000] {logging_mixin.py:190} WARNING - 爬取 雲端資安:  27%|##6       | 7/26 [59:59<2:42:49, 514.20s/it]
+[2024-11-03T08:12:02.836+0000] {taskinstance.py:3310} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 762, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 733, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 406, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 238, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 256, in execute_callable
+    return runner.run(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/tasks/main_scrap.py", line 264, in web_crawler
+    scraper.scrape_jobs(key_txt)
+  File "/opt/airflow/tasks/main_scrap.py", line 152, in scrape_jobs
+    time.sleep(sleep_time)
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/timeout.py", line 69, in handle_timeout
+    raise AirflowTaskTimeout(self.error_message)
+airflow.exceptions.AirflowTaskTimeout: Timeout, PID: 456
+[2024-11-03T08:12:02.847+0000] {taskinstance.py:1225} INFO - Marking task as UP_FOR_RETRY. dag_id=job_scraping_pipeline, task_id=scrape_chunk_4, run_id=manual__2024-11-02T21:01:36.690915+00:00, execution_date=20241102T210136, start_date=20241103T071202, end_date=20241103T081202
+[2024-11-03T08:12:02.866+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2024-11-03T08:12:02.897+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 2
+[2024-11-03T08:12:02.921+0000] {taskinstance.py:3900} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2024-11-03T08:12:02.922+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

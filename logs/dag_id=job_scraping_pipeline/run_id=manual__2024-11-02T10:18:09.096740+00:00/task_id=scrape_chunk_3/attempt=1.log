@@ -1,0 +1,27 @@
+[2024-11-02T20:59:59.885+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2024-11-02T20:59:59.901+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: job_scraping_pipeline.scrape_chunk_3 manual__2024-11-02T10:18:09.096740+00:00 [None]>
+[2024-11-02T20:59:59.911+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: job_scraping_pipeline.scrape_chunk_3 manual__2024-11-02T10:18:09.096740+00:00 [None]>
+[2024-11-02T20:59:59.911+0000] {taskinstance.py:2865} INFO - Starting attempt 1 of 5
+[2024-11-02T20:59:59.928+0000] {taskinstance.py:2888} INFO - Executing <Task(PythonOperator): scrape_chunk_3> on 2024-11-02 10:18:09.096740+00:00
+[2024-11-02T20:59:59.942+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'job_scraping_pipeline', 'scrape_chunk_3', 'manual__2024-11-02T10:18:09.096740+00:00', '--job-id', '57', '--raw', '--subdir', 'DAGS_FOLDER/test.py', '--cfg-path', '/tmp/tmpidt_42ye']
+[2024-11-02T20:59:59.945+0000] {standard_task_runner.py:105} INFO - Job 57: Subtask scrape_chunk_3
+[2024-11-02T20:59:59.946+0000] {logging_mixin.py:190} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:70 DeprecationWarning: This process (pid=252) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2024-11-02T20:59:59.947+0000] {standard_task_runner.py:72} INFO - Started process 257 to run task
+[2024-11-02T20:59:59.990+0000] {task_command.py:467} INFO - Running <TaskInstance: job_scraping_pipeline.scrape_chunk_3 manual__2024-11-02T10:18:09.096740+00:00 [running]> on host 6fb5d61061dc
+[2024-11-02T21:00:00.072+0000] {taskinstance.py:3131} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='job_scraping_pipeline' AIRFLOW_CTX_TASK_ID='scrape_chunk_3' AIRFLOW_CTX_EXECUTION_DATE='2024-11-02T10:18:09.096740+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-11-02T10:18:09.096740+00:00'
+[2024-11-02T21:00:00.076+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2024-11-02T21:00:00.095+0000] {main_scrap.py:56} INFO - 初始化完成，輸出目錄: jobs_csv
+[2024-11-02T21:00:00.096+0000] {main_scrap.py:94} INFO - 開始爬取關鍵字: 機器學習工程師
+[2024-11-02T21:00:00.097+0000] {main_scrap.py:77} INFO - 請求URL: https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword=%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E5%B7%A5%E7%A8%8B%E5%B8%AB&order=15&asc=0&page=1&mode=s&jobsource=m_joblist_search&searchTempExclude=2
+[2024-11-02T21:00:00.687+0000] {main_scrap.py:107} INFO - 開始爬取關鍵字: 機器學習工程師, 共有：35 頁
+[2024-11-02T21:00:00.694+0000] {logging_mixin.py:190} WARNING - 爬取 機器學習工程師:   0%|          | 0/35 [00:00<?, ?it/s]
+[2024-11-02T21:00:00.695+0000] {main_scrap.py:112} INFO - 頁面 1 延遲 13.70 秒
+[2024-11-02T21:00:29.780+0000] {main_scrap.py:151} INFO - 職位詳情延遲 5.17 秒
+[2024-11-02T21:00:45.381+0000] {local_task_job_runner.py:346} WARNING - State of this instance has been externally set to success. Terminating instance.
+[2024-11-02T21:00:45.383+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2024-11-02T21:00:45.384+0000] {process_utils.py:132} INFO - Sending 15 to group 257. PIDs of all processes in the group: [257]
+[2024-11-02T21:00:45.384+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 257
+[2024-11-02T21:00:45.385+0000] {taskinstance.py:3092} ERROR - Received SIGTERM. Terminating subprocesses.
+[2024-11-02T21:00:45.386+0000] {logging_mixin.py:190} WARNING - 爬取 機器學習工程師:   0%|          | 0/35 [00:44<?, ?it/s]
+[2024-11-02T21:00:45.401+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2024-11-02T21:00:45.437+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=257, status='terminated', exitcode=0, started='20:59:59') (257) terminated with exit code 0

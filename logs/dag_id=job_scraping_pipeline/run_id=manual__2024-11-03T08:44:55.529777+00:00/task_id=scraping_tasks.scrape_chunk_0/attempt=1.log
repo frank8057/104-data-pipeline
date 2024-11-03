@@ -1,0 +1,59 @@
+[2024-11-03T08:45:00.664+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2024-11-03T08:45:00.680+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: job_scraping_pipeline.scraping_tasks.scrape_chunk_0 manual__2024-11-03T08:44:55.529777+00:00 [queued]>
+[2024-11-03T08:45:00.688+0000] {taskinstance.py:2612} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: job_scraping_pipeline.scraping_tasks.scrape_chunk_0 manual__2024-11-03T08:44:55.529777+00:00 [queued]>
+[2024-11-03T08:45:00.689+0000] {taskinstance.py:2865} INFO - Starting attempt 1 of 4
+[2024-11-03T08:45:00.708+0000] {taskinstance.py:2888} INFO - Executing <Task(PythonOperator): scraping_tasks.scrape_chunk_0> on 2024-11-03 08:44:55.529777+00:00
+[2024-11-03T08:45:00.722+0000] {standard_task_runner.py:104} INFO - Running: ['airflow', 'tasks', 'run', 'job_scraping_pipeline', 'scraping_tasks.scrape_chunk_0', 'manual__2024-11-03T08:44:55.529777+00:00', '--job-id', '107', '--raw', '--subdir', 'DAGS_FOLDER/test.py', '--cfg-path', '/tmp/tmpxttgknp_']
+[2024-11-03T08:45:00.725+0000] {standard_task_runner.py:105} INFO - Job 107: Subtask scraping_tasks.scrape_chunk_0
+[2024-11-03T08:45:00.727+0000] {logging_mixin.py:190} WARNING - /home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py:70 DeprecationWarning: This process (pid=758) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2024-11-03T08:45:00.727+0000] {standard_task_runner.py:72} INFO - Started process 763 to run task
+[2024-11-03T08:45:00.774+0000] {task_command.py:467} INFO - Running <TaskInstance: job_scraping_pipeline.scraping_tasks.scrape_chunk_0 manual__2024-11-03T08:44:55.529777+00:00 [running]> on host 6fb5d61061dc
+[2024-11-03T08:45:00.868+0000] {taskinstance.py:3131} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='job_scraping_pipeline' AIRFLOW_CTX_TASK_ID='scraping_tasks.scrape_chunk_0' AIRFLOW_CTX_EXECUTION_DATE='2024-11-03T08:44:55.529777+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-11-03T08:44:55.529777+00:00'
+[2024-11-03T08:45:00.869+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2024-11-03T08:45:00.890+0000] {main_scrap.py:97} INFO - 初始化完成，輸出目錄: jobs_csv
+[2024-11-03T08:45:00.890+0000] {main_scrap.py:135} INFO - 開始爬取關鍵字: 軟體工程師
+[2024-11-03T08:45:00.891+0000] {main_scrap.py:118} INFO - 請求URL: https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword=%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB&order=15&asc=0&page=1&mode=s&jobsource=m_joblist_search&searchTempExclude=2
+[2024-11-03T08:45:01.467+0000] {main_scrap.py:148} INFO - 開始爬取關鍵字: 軟體工程師, 共有：150 頁
+[2024-11-03T08:45:01.476+0000] {logging_mixin.py:190} WARNING - 爬取 軟體工程師:   0%|          | 0/150 [00:00<?, ?it/s]
+[2024-11-03T08:45:01.476+0000] {main_scrap.py:153} INFO - 頁面 1 延遲 6.42 秒
+[2024-11-03T08:45:16.526+0000] {main_scrap.py:192} INFO - 職位詳情延遲 18.87 秒
+[2024-11-03T08:45:46.625+0000] {main_scrap.py:192} INFO - 職位詳情延遲 14.93 秒
+[2024-11-03T08:46:12.625+0000] {main_scrap.py:192} INFO - 職位詳情延遲 12.34 秒
+[2024-11-03T08:46:38.721+0000] {main_scrap.py:192} INFO - 職位詳情延遲 17.33 秒
+[2024-11-03T08:47:04.852+0000] {main_scrap.py:192} INFO - 職位詳情延遲 16.35 秒
+[2024-11-03T08:47:31.040+0000] {main_scrap.py:192} INFO - 職位詳情延遲 14.90 秒
+[2024-11-03T08:47:57.805+0000] {main_scrap.py:192} INFO - 職位詳情延遲 14.51 秒
+[2024-11-03T08:48:21.539+0000] {main_scrap.py:192} INFO - 職位詳情延遲 5.14 秒
+[2024-11-03T08:48:35.751+0000] {main_scrap.py:192} INFO - 職位詳情延遲 19.66 秒
+[2024-11-03T08:49:04.052+0000] {main_scrap.py:192} INFO - 職位詳情延遲 15.56 秒
+[2024-11-03T08:49:31.328+0000] {main_scrap.py:192} INFO - 職位詳情延遲 16.63 秒
+[2024-11-03T08:49:59.989+0000] {main_scrap.py:192} INFO - 職位詳情延遲 14.67 秒
+[2024-11-03T08:50:22.052+0000] {main_scrap.py:192} INFO - 職位詳情延遲 10.39 秒
+[2024-11-03T08:50:40.951+0000] {main_scrap.py:192} INFO - 職位詳情延遲 8.92 秒
+[2024-11-03T08:51:03.777+0000] {main_scrap.py:192} INFO - 職位詳情延遲 16.79 秒
+[2024-11-03T08:51:27.892+0000] {main_scrap.py:192} INFO - 職位詳情延遲 16.23 秒
+[2024-11-03T08:51:59.353+0000] {main_scrap.py:192} INFO - 職位詳情延遲 17.12 秒
+[2024-11-03T08:52:24.835+0000] {main_scrap.py:192} INFO - 職位詳情延遲 19.35 秒
+[2024-11-03T08:52:53.896+0000] {main_scrap.py:192} INFO - 職位詳情延遲 17.64 秒
+[2024-11-03T08:53:23.668+0000] {main_scrap.py:192} INFO - 職位詳情延遲 18.79 秒
+[2024-11-03T08:53:51.068+0000] {main_scrap.py:192} INFO - 職位詳情延遲 5.02 秒
+[2024-11-03T08:54:04.724+0000] {main_scrap.py:192} INFO - 職位詳情延遲 12.80 秒
+[2024-11-03T08:54:17.523+0000] {logging_mixin.py:190} WARNING - 爬取 軟體工程師:   1%|          | 1/150 [09:16<23:00:50, 556.05s/it]
+[2024-11-03T08:54:17.523+0000] {main_scrap.py:153} INFO - 頁面 2 延遲 5.84 秒
+[2024-11-03T08:54:39.356+0000] {main_scrap.py:192} INFO - 職位詳情延遲 14.41 秒
+[2024-11-03T08:55:07.547+0000] {main_scrap.py:192} INFO - 職位詳情延遲 9.15 秒
+[2024-11-03T08:55:26.321+0000] {main_scrap.py:192} INFO - 職位詳情延遲 12.68 秒
+[2024-11-03T08:55:46.688+0000] {main_scrap.py:192} INFO - 職位詳情延遲 11.07 秒
+[2024-11-03T08:56:04.239+0000] {main_scrap.py:192} INFO - 職位詳情延遲 12.57 秒
+[2024-11-03T08:56:31.220+0000] {main_scrap.py:192} INFO - 職位詳情延遲 6.77 秒
+[2024-11-03T08:56:51.454+0000] {main_scrap.py:192} INFO - 職位詳情延遲 8.13 秒
+[2024-11-03T08:57:14.415+0000] {main_scrap.py:192} INFO - 職位詳情延遲 6.09 秒
+[2024-11-03T08:57:34.888+0000] {main_scrap.py:192} INFO - 職位詳情延遲 9.81 秒
+[2024-11-03T08:57:53.666+0000] {local_task_job_runner.py:346} WARNING - State of this instance has been externally set to failed. Terminating instance.
+[2024-11-03T08:57:53.668+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
+[2024-11-03T08:57:53.669+0000] {process_utils.py:132} INFO - Sending 15 to group 763. PIDs of all processes in the group: [763]
+[2024-11-03T08:57:53.670+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 763
+[2024-11-03T08:57:53.670+0000] {taskinstance.py:3092} ERROR - Received SIGTERM. Terminating subprocesses.
+[2024-11-03T08:57:53.671+0000] {logging_mixin.py:190} WARNING - 爬取 軟體工程師:   1%|          | 1/150 [12:52<31:57:36, 772.19s/it]
+[2024-11-03T08:57:53.690+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2024-11-03T08:57:53.722+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=763, status='terminated', exitcode=0, started='08:45:00') (763) terminated with exit code 0
