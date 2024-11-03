@@ -1,3 +1,0 @@
-[2024-11-03T08:58:14.256+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
-[2024-11-03T08:58:14.264+0000] {taskinstance.py:2602} INFO - Dependencies not met for <TaskInstance: job_scraping_pipeline.scraping_tasks.scrape_chunk_4 manual__2024-11-03T08:44:55.529777+00:00 [skipped]>, dependency 'Task Instance State' FAILED: Task is in the 'skipped' state.
-[2024-11-03T08:58:14.274+0000] {local_task_job_runner.py:166} INFO - Task is not able to be run
