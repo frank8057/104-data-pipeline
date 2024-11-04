@@ -1,0 +1,88 @@
+# Airflow 相關
+airflow.db
+airflow.cfg
+unittests.cfg
+logs/
+*.pyc
+__pycache__/
+.env
+.venv/
+webserver_config.py
+airflow-webserver.pid
+standalone_admin_password.txt
+
+# 專案特定文件
+data/
+dags/__pycache__/
+plugins/__pycache__/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE 相關
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+.project
+.pydevproject
+.settings/
+
+# 系統相關
+.DS_Store
+.cache
+Thumbs.db
+desktop.ini
+
+# 虛擬環境
+venv/
+env/
+ENV/
+.python-version
+
+# 依賴管理
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 臨時文件
+tmp/
+temp/
+.temp/
+*.tmp
+*.bak
+*.swp
+*~
+
+# 編譯文件
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg
+*.egg-info/
+
+# 測試相關
+.tox/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+
+# 文檔相關
+docs/_build/
+site/
+
+# 本地開發配置
+local_settings.py
+settings_local.py
+
+# Python 緩存文件
+__pycache__/
+*.py[cod]
+*$py.class
+.Pythonlogs/*
+*.log
