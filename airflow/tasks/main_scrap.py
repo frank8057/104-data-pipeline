@@ -78,23 +78,31 @@ def timeout(minutes=1):
         signal.alarm(0)
 
 class JobScraper:
-    def __init__(self, output_dir='jobs_csv', max_retries=3, retry_delay=5):
+    def __init__(self, output_dir=None, max_retries=3, retry_delay=5):
         """初始化爬蟲類
         
         Args:
-            output_dir (str): 輸出目錄路徑，可從環境變數 AIRFLOW_VAR_OUTPUT_DIR 覆蓋
-            max_retries (int): 最大重試次數，可從環境變數 AIRFLOW_VAR_MAX_RETRIES 覆蓋
-            retry_delay (int): 重試等待時間(秒)，可從環境變數 AIRFLOW_VAR_RETRY_DELAY 覆蓋
+            output_dir (str): 輸出目錄路徑，預設使用 ./jobs_csv
+            max_retries (int): 最大重試次數
+            retry_delay (int): 重試等待時間(秒)
         """
         self.setup_logging()
         self.today = date.today()
         
-        # 從環境變數讀取配置，如果沒有則使用預設值
-        self.output_dir = Path(os.getenv('AIRFLOW_VAR_OUTPUT_DIR', output_dir))
-        self.max_retries = int(os.getenv('AIRFLOW_VAR_MAX_RETRIES', max_retries))
-        self.retry_delay = int(os.getenv('AIRFLOW_VAR_RETRY_DELAY', retry_delay))
+        # 設定輸出目錄路徑 - 使用傳入的路徑或預設路徑
+        self.output_dir = Path(output_dir) if output_dir else Path(__file__).parent.parent / 'jobs_csv'
+            
+        # 建立目錄結構
+        try:
+            self.output_dir.mkdir(parents=True, mode=0o755, exist_ok=True)
+            logging.info(f"成功建立或確認目錄存在: {self.output_dir}")
+        except PermissionError as e:
+            logging.error(f"建立目錄失敗，權限不足: {e}")
+            raise
+
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
         
-        self.output_dir.mkdir(exist_ok=True)
         self.session = self.create_retry_session(retries=self.max_retries, 
                                                backoff_factor=self.retry_delay)
         self.headers = self.get_random_headers()
@@ -313,11 +321,8 @@ def web_crawler(key_texts_chunk=None):
         key_texts_chunk: 要處理的關鍵字列表子集
     """
     try:
-        scraper = JobScraper(
-            output_dir='jobs_csv',
-            max_retries=3,      # 最大重試次數
-            retry_delay=5       # 重試等待時間
-        )
+        # 使用預設的 ./jobs_csv 路徑
+        scraper = JobScraper(max_retries=3, retry_delay=5)
         
         # 如果沒有提供特定的關鍵字組，使用完整列表的第一組
         keywords_to_process = key_texts_chunk if key_texts_chunk else split_keywords(max_keywords_per_chunk=5)[0]
@@ -325,13 +330,12 @@ def web_crawler(key_texts_chunk=None):
         for key_txt in keywords_to_process:
             try:
                 # 為每個關鍵字設置處理超時
-                with timeout(minutes=30):  # 每個關鍵字最多處理30分鐘
+                with timeout(minutes=60):  # 增加單個關鍵字處理超時時間
                     scraper.scrape_jobs(key_txt)
                     logging.info(f"成功處理關鍵字: {key_txt}")
                     
             except TimeoutError:
                 logging.error(f"處理關鍵字 {key_txt} 超時")
-                continue
             except Exception as e:
                 logging.error(f"處理關鍵字 {key_txt} 時發生錯誤: {str(e)}")
                 continue

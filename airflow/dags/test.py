@@ -59,6 +59,8 @@ default_args = {
     'email_on_retry': False,
     'retries': CONFIG['MAX_RETRIES'],
     'retry_delay': CONFIG['RETRY_DELAY'],
+    'retry_exponential_backoff': True,
+    'max_retry_delay': timedelta(minutes=30),
     'execution_timeout': CONFIG['PROCESSING_TIMEOUT']
 }
 
@@ -93,7 +95,7 @@ with DAG(
     schedule_interval='0 0 */7 * *',
     catchup=False,
     tags=['scraping', 'etl'],
-    concurrency=6,
+    concurrency=1,
     max_active_runs=1,
     dagrun_timeout=timedelta(hours=8)
 ) as dag:
@@ -101,10 +103,13 @@ with DAG(
     # 爬蟲任務組
     with TaskGroup(group_id='scraping_tasks') as scraping_group:
         key_chunks = split_keywords()
-        scraping_tasks = [
-            create_scraping_task(chunk, i) 
-            for i, chunk in enumerate(key_chunks)
-        ]
+        previous_task = None
+        for i, chunk in enumerate(key_chunks):
+            current_task = create_scraping_task(chunk, i)
+            if previous_task:
+                previous_task >> current_task
+            previous_task = current_task
+        scraping_tasks = [current_task]  # 保存最後一個任務用於後續依賴
 
     # 數據處理任務組
     with TaskGroup(group_id='data_processing') as processing_group:

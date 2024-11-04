@@ -1,11 +1,8 @@
 import pandas as pd
-import os
 from pathlib import Path
-import glob
 
-# 從環境變數讀取配置
-JOBS_CSV_DIR = os.getenv('AIRFLOW_VAR_JOBS_CSV_DIR', 'jobs_csv')
-OUTPUT_ENCODING = os.getenv('AIRFLOW_VAR_OUTPUT_ENCODING', 'utf-8-sig')
+# 修改路徑設定 - 使用相對路徑
+CSV_DIR = Path(__file__).parent.parent / 'jobs_csv'
 
 # 大分類字典
 category_dict = {
@@ -58,46 +55,46 @@ subcategory_dict = {
 def categorize_jobs():
     """讀取 jobs_csv 目錄中的所有 CSV 檔案，根據檔名添加分類欄位"""
     try:
-        # 設定目錄路徑
-        directory = Path(JOBS_CSV_DIR)
-        
         # 使用 glob 取得目錄中所有 CSV 檔案
-        csv_files = glob.glob(str(directory / '*.csv'))
+        csv_files = list(CSV_DIR.glob('*.csv'))
         
         if not csv_files:
-            print(f"錯誤: 在 '{directory}' 目錄中找不到 CSV 檔案")
+            print(f"錯誤: 在 '{CSV_DIR}' 目錄中找不到 CSV 檔案")
             return
             
         # 處理每個 CSV 檔案
         for csv_file in csv_files:
             print(f"處理檔案: {csv_file}")
             
-            # 取得檔案名稱（不含路徑和副檔名）
-            file_name = os.path.splitext(os.path.basename(csv_file))[0]
-            
-            # 讀取 CSV 檔案
-            df = pd.read_csv(csv_file)
-            
-            # 根據檔名判斷子分類
-            df['sub_category'] = next(
-                (sub_cat for sub_cat, sub_keywords in subcategory_dict.items()
-                 if any(keyword.lower() in file_name.lower() for keyword in sub_keywords)),
-                pd.NA
-            )
-            
-            # 如果有子分類，判斷主分類
-            if pd.notna(df['sub_category'].iloc[0]):
-                df['main_category'] = next(
-                    (main_cat for main_cat, keywords in category_dict.items()
-                     if df['sub_category'].iloc[0] in keywords),
+            try:
+                # 讀取 CSV 檔案
+                df = pd.read_csv(csv_file)
+                
+                # 根據檔名判斷子分類
+                file_name = csv_file.stem
+                df['sub_category'] = next(
+                    (sub_cat for sub_cat, sub_keywords in subcategory_dict.items()
+                     if any(keyword.lower() in file_name.lower() for keyword in sub_keywords)),
                     pd.NA
                 )
-            else:
-                df['main_category'] = pd.NA
-            
-            # 保存回原檔案
-            df.to_csv(csv_file, index=False, encoding=OUTPUT_ENCODING)
-            print(f"已完成檔案 {csv_file} 的分類")
+                
+                # 如果有子分類，判斷主分類
+                if pd.notna(df['sub_category'].iloc[0]):
+                    df['main_category'] = next(
+                        (main_cat for main_cat, keywords in category_dict.items()
+                         if df['sub_category'].iloc[0] in keywords),
+                        pd.NA
+                    )
+                else:
+                    df['main_category'] = pd.NA
+                
+                # 直接覆寫原始檔案
+                df.to_csv(csv_file, index=False, encoding='utf-8-sig')
+                print(f"已完成檔案 {csv_file} 的分類")
+                
+            except Exception as e:
+                print(f"處理檔案 {csv_file} 時發生錯誤: {e}")
+                continue
             
     except Exception as e:
         print(f"處理檔案時發生錯誤: {e}")
