@@ -43,6 +43,7 @@ venv/
 env/
 ENV/
 .python-version
+docker-compose.yml
 
 # 依賴管理
 pip-log.txt
