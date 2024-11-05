@@ -19,6 +19,7 @@ plugins/__pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+.bash_history
 
 # IDE 相關
 .vscode/
@@ -29,6 +30,7 @@ htmlcov/
 .project
 .pydevproject
 .settings/
+.cursor-server/
 
 # 系統相關
 .DS_Store
@@ -86,3 +88,6 @@ __pycache__/
 *$py.class
 .Pythonlogs/*
 *.log
+
+# git 相關
+.gitconfig
