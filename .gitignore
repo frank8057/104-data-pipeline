@@ -20,7 +20,9 @@ plugins/__pycache__/
 .coverage
 htmlcov/
 .bash_history
-
+plugins
+config
+.config
 # IDE 相關
 .vscode/
 .idea/
@@ -44,6 +46,9 @@ env/
 ENV/
 .python-version
 docker-compose.yml
+.docker
+Dockerfile
+airflow_venv/
 
 # 依賴管理
 pip-log.txt
@@ -74,6 +79,8 @@ dist/
 coverage.xml
 *.cover
 .pytest_cache/
+.lesshst
+.bashrc
 
 # 文檔相關
 docs/_build/

@@ -78,7 +78,7 @@ def timeout(minutes=1):
         signal.alarm(0)
 
 class JobScraper:
-    def __init__(self, output_dir=None, max_retries=3, retry_delay=5):
+    def __init__(self, max_retries=3, retry_delay=5):
         """初始化爬蟲類
         
         Args:
@@ -86,25 +86,22 @@ class JobScraper:
             max_retries (int): 最大重試次數
             retry_delay (int): 重試等待時間(秒)
         """
+        self.logger = logging.getLogger(__name__)
         self.setup_logging()
-        self.today = date.today()
         
-        # 設定輸出目錄路徑 - 使用傳入的路徑或預設路徑
-        self.output_dir = Path(output_dir) if output_dir else Path(__file__).parent.parent / 'jobs_csv'
-            
-        # 建立目錄結構
-        try:
-            self.output_dir.mkdir(parents=True, mode=0o755, exist_ok=True)
-            logging.info(f"成功建立或確認目錄存在: {self.output_dir}")
-        except PermissionError as e:
-            logging.error(f"建立目錄失敗，權限不足: {e}")
-            raise
+        self.today = date.today()
+        # 使用新的目錄路徑
+        self.output_dir = Path("/opt/airflow/jobs_csv")
+        
+        # 自動創建目錄
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        logging.info(f"Output directory path: {self.output_dir}")
 
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         
         self.session = self.create_retry_session(retries=self.max_retries, 
-                                               backoff_factor=self.retry_delay)
+                                                 backoff_factor=self.retry_delay)
         self.headers = self.get_random_headers()
         logging.info(f"初始化完成，輸出目錄: {self.output_dir}")
 

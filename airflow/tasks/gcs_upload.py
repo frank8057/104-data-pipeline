@@ -46,29 +46,23 @@ class GCSUploader:
 
 def upload_main():
     try:
-        # 使用相對於當前專案的路徑
-        current_dir = Path(__file__).parent.parent  # 獲取 airflow 目錄
-        data_dir = current_dir / 'data'  # 指向 airflow/data 目錄
+        # 使用絕對路徑
+        data_dir = Path('/opt/airflow/data')
+        source_file = data_dir / '104data.cleaning.csv'
         
-        # 設定源文件路徑
-        source_file = str(data_dir / '104data.cleaning.csv')
-        
-        # 添加調試日誌
-        logging.info(f"當前工作目錄: {Path.cwd()}")
-        logging.info(f"數據目錄路徑: {data_dir}")
-        logging.info(f"源文件路徑: {source_file}")
-        logging.info(f"目錄是否存在: {data_dir.exists()}")
-        
-        # 驗證文件是否存在
-        if not Path(source_file).exists():
-            logging.error(f"目錄內容: {list(data_dir.glob('*'))}")
+        # 確保目錄存在並有正確權限
+        try:
+            data_dir.mkdir(parents=True, exist_ok=True)
+            os.chmod(data_dir, 0o777)
+        except Exception as e:
+            logging.error(f"設置目錄權限失敗: {e}")
+            raise
+            
+        if not source_file.exists():
             raise FileNotFoundError(f"找不到源文件: {source_file}")
             
-        # 初始化上傳器 - 不需要硬編碼參數
         uploader = GCSUploader()
-        
-        # 執行上傳
-        uploader.upload_file(source_file)
+        uploader.upload_file(str(source_file))
         
     except Exception as e:
         logging.error(f"GCS 上傳主程序執行錯誤: {e}")

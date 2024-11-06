@@ -1,8 +1,28 @@
 import pandas as pd
 from pathlib import Path
+import os
+import logging
 
-# 修改路徑設定 - 使用相對路徑
-CSV_DIR = Path(__file__).parent.parent / 'jobs_csv'
+# 使用絕對路徑
+CSV_DIR = Path('/opt/airflow/jobs_csv')
+
+def ensure_dir_exists(directory):
+    """確保目錄存在並可寫入"""
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory, mode=0o777, exist_ok=True)
+        elif not os.access(directory, os.W_OK):
+            # 如果chmod失敗，記錄警告但繼續執行
+            try:
+                os.chmod(directory, 0o777)
+            except PermissionError as e:
+                logging.warning(f"無法更改目錄權限，但將繼續執行: {str(e)}")
+    except Exception as e:
+        logging.error(f"處理目錄時發生錯誤: {str(e)}")
+        raise
+
+# 使用新函數替換原本的 os.chmod
+ensure_dir_exists(CSV_DIR)
 
 # 大分類字典
 category_dict = {

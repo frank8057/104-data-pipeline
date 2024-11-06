@@ -1,29 +1,51 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 import logging
 import os
 from dotenv import load_dotenv
+
+# 添加父目錄到 Python 路徑
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
+
+# Airflow 相關導入
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.models import Variable
 from airflow.exceptions import AirflowException
+from airflow.models.pool import Pool
 
 # 載入環境變數
-load_dotenv()
+# load_dotenv()
 
-# 檢查必要的環境變數
-required_env_vars = [
-    'AIRFLOW_VAR_GCS_BUCKET_NAME',
-    'AIRFLOW_VAR_GCS_PROJECT_ID',
-    'AIRFLOW_VAR_GCS_FILE_NAME',
-    'AIRFLOW_VAR_BQ_TABLE_ID'
+# 檢查必要的 Airflow 變數
+required_variables = [
+    'GCS_BUCKET_NAME',
+    'GCS_PROJECT_ID',
+    'GCS_FILE_NAME',
+    'BQ_TABLE_ID'
 ]
 
-missing_vars = [var for var in required_env_vars if not os.getenv(var)]
-if missing_vars:
-    raise AirflowException(f"缺少必要的環境變數: {', '.join(missing_vars)}")
+# 環境變數驗證函數
+def validate_env_vars():
+    missing_vars = []
+    for var_name in required_variables:
+        try:
+            value = Variable.get(var_name)
+            logger.info(f"{var_name}: {value}")
+        except KeyError:
+            missing_vars.append(var_name)
+    
+    if missing_vars:
+        error_msg = f"缺少必要的 Airflow 變數: {', '.join(missing_vars)}"
+        logger.error(error_msg)
+        raise AirflowException(error_msg)
 
 # 改進日誌配置
 logging.basicConfig(
@@ -31,6 +53,9 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# 驗證環境變數
+validate_env_vars()
 
 # 使用 try-except 包裝模組導入
 try:
@@ -41,14 +66,19 @@ try:
     from tasks.bigquery_load import load_to_bigquery
 except ImportError as e:
     logger.error(f"模組導入失敗: {str(e)}")
+    logger.error(f"當前 Python 路徑: {sys.path}")
+    logger.error(f"當前工作目錄: {os.getcwd()}")
     raise AirflowException(f"關鍵模組導入失敗: {str(e)}")
 
 # 配置參數
 CONFIG = {
-    'SCRAPING_TIMEOUT': timedelta(hours=6),
+    'SCRAPING_TIMEOUT': timedelta(hours=12),
     'PROCESSING_TIMEOUT': timedelta(hours=2),
     'RETRY_DELAY': timedelta(minutes=5),
-    'MAX_RETRIES': 3
+    'MAX_RETRIES': 5,
+    'MAX_ACTIVE_RUNS': 3,
+    'POOL_SIZE': 3,
+    'CHUNK_SIZE': 10
 }
 
 default_args = {
@@ -69,7 +99,10 @@ def create_scraping_task(chunk, task_id):
     return PythonOperator(
         task_id=f'scrape_chunk_{task_id}',
         python_callable=web_crawler,
-        op_kwargs={'key_texts_chunk': chunk},
+        op_kwargs={
+            'key_texts_chunk': chunk,
+            'chunk_size': CONFIG['CHUNK_SIZE']
+        },
         execution_timeout=CONFIG['SCRAPING_TIMEOUT'],
         retry_delay=CONFIG['RETRY_DELAY'],
         retries=CONFIG['MAX_RETRIES'],
@@ -87,6 +120,20 @@ def create_processing_task(task_id, python_callable, **kwargs):
         **kwargs
     )
 
+# 確保爬蟲池存在
+def create_pool():
+    try:
+        Pool.get_pool('scraping_pool')
+    except:
+        Pool.create(
+            name='scraping_pool',
+            slots=CONFIG['POOL_SIZE'],
+            description='Pool for web scraping tasks'
+        )
+
+# 在 DAG 定義之前調用
+create_pool()
+
 # 創建 DAG
 with DAG(
     'job_scraping_pipeline',
@@ -95,8 +142,8 @@ with DAG(
     schedule_interval='0 0 */7 * *',
     catchup=False,
     tags=['scraping', 'etl'],
-    concurrency=1,
-    max_active_runs=1,
+    concurrency=3,  # 修改：允許3個任務並行
+    max_active_runs=CONFIG['MAX_ACTIVE_RUNS'],
     dagrun_timeout=timedelta(hours=8)
 ) as dag:
     
@@ -143,6 +190,5 @@ with DAG(
 
 # 記錄環境信息
 logger.info(f"Python 解釋器路徑: {sys.executable}")
+logger.info(f"Python 版本: {sys.version}")
 logger.info(f"DAG ID: {dag.dag_id}")
-logger.info(f"GCS Bucket: {os.getenv('AIRFLOW_VAR_GCS_BUCKET_NAME')}")
-logger.info(f"BigQuery Table: {os.getenv('AIRFLOW_VAR_BQ_TABLE_ID')}")

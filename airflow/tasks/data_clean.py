@@ -17,9 +17,19 @@ from datetime import datetime
 class DataProcessor:
     def __init__(self):
         self.setup_logging()
-        # 從環境變數讀取配置，如果沒有則使用預設值
-        self.input_dir = Path(os.getenv('AIRFLOW_VAR_INPUT_DIR', 'jobs_csv'))
-        self.output_file = os.getenv('AIRFLOW_VAR_OUTPUT_FILE', '104data_cleaning.csv')
+        # 使用絕對路徑並確保目錄存在
+        self.input_dir = Path('/opt/airflow/jobs_csv')
+        self.output_dir = Path('/opt/airflow/data')
+        self.output_file = '104data.cleaning.csv'
+        
+        # 確保目錄存在並有正確權限
+        for directory in [self.input_dir, self.output_dir]:
+            try:
+                directory.mkdir(parents=True, exist_ok=True)
+                os.chmod(directory, 0o777)
+            except Exception as e:
+                logging.error(f"創建目錄失敗 {directory}: {e}")
+                raise
         self.resources = self.load_resources()
         logging.info(f"初始化完成，輸入目錄: {self.input_dir}")
 
