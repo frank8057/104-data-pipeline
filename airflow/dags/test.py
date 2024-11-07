@@ -7,6 +7,8 @@ from pathlib import Path
 import logging
 import os
 from dotenv import load_dotenv
+import json
+import time
 
 # 添加父目錄到 Python 路徑
 current_dir = Path(__file__).resolve().parent
@@ -19,7 +21,8 @@ from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.models import Variable
 from airflow.exceptions import AirflowException
-from airflow.models.pool import Pool
+from airflow.models.baseoperator import cross_downstream, chain
+from airflow.operators.empty import EmptyOperator
 
 # 載入環境變數
 # load_dotenv()
@@ -72,15 +75,16 @@ except ImportError as e:
 
 # 配置參數
 CONFIG = {
-    'SCRAPING_TIMEOUT': timedelta(hours=12),
-    'PROCESSING_TIMEOUT': timedelta(hours=2),
+    'REQUEST_DELAY': 3,  # 每次請求延遲3秒
+    'CHUNK_SIZE': 100,  # 每個任務處理100個職位
+    'SCRAPING_TIMEOUT': timedelta(hours=48),  # 單個爬蟲任務超時
+    'PROCESSING_TIMEOUT': timedelta(hours=4),
     'RETRY_DELAY': timedelta(minutes=5),
-    'MAX_RETRIES': 5,
-    'MAX_ACTIVE_RUNS': 3,
-    'POOL_SIZE': 3,
-    'CHUNK_SIZE': 10
+    'MAX_RETRIES': 3,
+    'MAX_ACTIVE_RUNS': 1
 }
 
+# 預設參數
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -94,24 +98,8 @@ default_args = {
     'execution_timeout': CONFIG['PROCESSING_TIMEOUT']
 }
 
-def create_scraping_task(chunk, task_id):
-    """創建單個爬蟲任務"""
-    return PythonOperator(
-        task_id=f'scrape_chunk_{task_id}',
-        python_callable=web_crawler,
-        op_kwargs={
-            'key_texts_chunk': chunk,
-            'chunk_size': CONFIG['CHUNK_SIZE']
-        },
-        execution_timeout=CONFIG['SCRAPING_TIMEOUT'],
-        retry_delay=CONFIG['RETRY_DELAY'],
-        retries=CONFIG['MAX_RETRIES'],
-        trigger_rule='all_success',
-        pool='scraping_pool'
-    )
-
 def create_processing_task(task_id, python_callable, **kwargs):
-    """創建處理任務的工廠函數"""
+    """創建處理任務的輔助函數"""
     return PythonOperator(
         task_id=task_id,
         python_callable=python_callable,
@@ -120,19 +108,11 @@ def create_processing_task(task_id, python_callable, **kwargs):
         **kwargs
     )
 
-# 確保爬蟲池存在
-def create_pool():
-    try:
-        Pool.get_pool('scraping_pool')
-    except:
-        Pool.create(
-            name='scraping_pool',
-            slots=CONFIG['POOL_SIZE'],
-            description='Pool for web scraping tasks'
-        )
-
-# 在 DAG 定義之前調用
-create_pool()
+# 檢查是否在 worker 中運行
+current_dag = None
+if len(sys.argv) > 3:
+    current_dag = sys.argv[3]
+    logger.info(f"Running in worker mode for DAG: {current_dag}")
 
 # 創建 DAG
 with DAG(
@@ -142,21 +122,58 @@ with DAG(
     schedule_interval='0 0 */7 * *',
     catchup=False,
     tags=['scraping', 'etl'],
-    concurrency=3,  # 修改：允許3個任務並行
+    dagrun_timeout=timedelta(hours=72),
     max_active_runs=CONFIG['MAX_ACTIVE_RUNS'],
-    dagrun_timeout=timedelta(hours=8)
+    concurrency=16,
+    render_template_as_native_obj=True,
+    default_view='graph'
 ) as dag:
     
     # 爬蟲任務組
     with TaskGroup(group_id='scraping_tasks') as scraping_group:
-        key_chunks = split_keywords()
-        previous_task = None
+        # 使用 split_keywords 函數獲取分組後的關鍵字
+        try:
+            key_chunks = split_keywords()
+            logger.info(f"成功獲取關鍵字分組,共 {len(key_chunks)} 組")
+        except Exception as e:
+            logger.error(f"獲取關鍵字分組失敗: {str(e)}")
+            raise AirflowException(f"關鍵字分組失敗: {str(e)}")
+        
+        # 創建並行的爬蟲任務
+        scraping_tasks = []
         for i, chunk in enumerate(key_chunks):
-            current_task = create_scraping_task(chunk, i)
-            if previous_task:
-                previous_task >> current_task
-            previous_task = current_task
-        scraping_tasks = [current_task]  # 保存最後一個任務用於後續依賴
+            task_id = f'scrape_chunk_{i}'
+            if current_dag is not None and f"scraping_tasks.{task_id}" not in current_dag:
+                logger.debug(f"跳過任務 {task_id} (worker 模式)")
+                continue
+                
+            task = PythonOperator(
+                task_id=task_id,
+                python_callable=web_crawler,
+                op_kwargs={
+                    'key_texts_chunk': chunk,
+                    'chunk_index': i
+                },
+                execution_timeout=CONFIG['SCRAPING_TIMEOUT'],
+                retries=CONFIG['MAX_RETRIES'],
+                retry_delay=CONFIG['RETRY_DELAY'],
+                pool='scraping_pool',  # 添加資源池控制
+                pool_slots=1
+            )
+            scraping_tasks.append(task)
+            logger.info(f"創建爬蟲任務 {task_id}, 處理 {len(chunk)} 個關鍵字")
+
+        if not scraping_tasks:
+            logger.warning("沒有創建任何爬蟲任務!")
+        
+        # 新增 finish_scraping 作為匯聚點
+        finish_scraping = EmptyOperator(
+            task_id='finish_scraping',
+            trigger_rule='all_success'
+        )
+        
+        # 設置依賴關係
+        scraping_tasks >> finish_scraping
 
     # 數據處理任務組
     with TaskGroup(group_id='data_processing') as processing_group:
@@ -165,18 +182,17 @@ with DAG(
             categorize_jobs,
             trigger_rule='all_success'
         )
-
+        
         clean_task = create_processing_task(
             'clean_data',
             clean_main
         )
-
+        
         upload_task = create_processing_task(
             'upload_to_gcs',
             upload_main
         )
-
-        # 設定處理組內的任務依賴
+        
         categorize_task >> clean_task >> upload_task
 
     # BigQuery 載入任務
@@ -186,7 +202,7 @@ with DAG(
     )
 
     # 設置任務組之間的依賴
-    scraping_group >> processing_group >> bq_load_task
+    finish_scraping >> processing_group >> bq_load_task
 
 # 記錄環境信息
 logger.info(f"Python 解釋器路徑: {sys.executable}")

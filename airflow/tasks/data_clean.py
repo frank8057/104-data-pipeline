@@ -246,12 +246,15 @@ class DataProcessor:
             # 重命名 DataFrame 欄位
             df = df.rename(columns=column_mapping)
             
+            # 加入新的 source 欄位，值為 "104"
+            df['source'] = '104'
+
             # 確保欄位順序
             desired_order = [
                 "report_date", "job_title", "company_name",
                 "main_category", "sub_category", "job_category", 
                 "salary", "location_region", "experience",
-                "industry", "job_url", "job_skills", "tools"
+                "industry", "job_url", "job_skills", "tools", "source"
             ]
             
             # 重新排序欄位

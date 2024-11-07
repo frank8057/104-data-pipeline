@@ -1,0 +1,11 @@
+tqdm
+jieba
+beautifulsoup4
+google-cloud-storage
+google-cloud-bigquery
+requests
+pandas
+python-dotenv
+mysqlclient
+selenium
+webdriver_manager

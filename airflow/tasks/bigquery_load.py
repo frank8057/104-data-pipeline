@@ -94,6 +94,7 @@ def get_table_schema():
         bigquery.SchemaField("job_url", "STRING"),
         bigquery.SchemaField("job_skills", "STRING"),
         bigquery.SchemaField("tools", "STRING"),
+        bigquery.SchemaField("source", "STRING"),
         # bigquery.SchemaField("scrape_date", "DATE"),
         bigquery.SchemaField("insert_timestamp", "TIMESTAMP")  # 保留此欄位用於分區
     ]

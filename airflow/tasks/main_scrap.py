@@ -1,5 +1,5 @@
 import time
-from datetime import date
+from datetime import date, datetime
 import csv
 from urllib.parse import quote
 from tqdm import tqdm
@@ -14,20 +14,13 @@ import re
 import signal
 from contextlib import contextmanager
 import os
+from airflow.exceptions import AirflowException
 
 # 配置日誌
 logging.basicConfig(level=logging.INFO)
 
 def split_keywords(max_keywords_per_chunk=5):
-    """
-    將關鍵字列表分成更小的chunks以加快處理速度
-    
-    Args:
-        max_keywords_per_chunk: 每個chunk包含的最大關鍵字數量
-        
-    Returns:
-        List[List[str]]: 分割後的關鍵字列表
-    """
+    """將關鍵字列表分成更小的chunks"""
     try:
         key_texts = [
             "軟體工程師", "Software Developer", "通訊軟體工程師",
@@ -54,7 +47,10 @@ def split_keywords(max_keywords_per_chunk=5):
             chunk = key_texts[i:i + max_keywords_per_chunk]
             chunks.append(chunk)
             
-        logging.info(f"關鍵字已分割為 {len(chunks)} 個chunks，每個chunk最多包含 {max_keywords_per_chunk} 個關鍵字")
+        logging.info(f"關鍵字已分割為 {len(chunks)} 個chunks，每個chunk包含關鍵字: ")
+        for i, chunk in enumerate(chunks):
+            logging.info(f"Chunk {i}: {chunk}")
+            
         return chunks
         
     except Exception as e:
@@ -78,33 +74,23 @@ def timeout(minutes=1):
         signal.alarm(0)
 
 class JobScraper:
-    def __init__(self, max_retries=3, retry_delay=5):
-        """初始化爬蟲類
-        
-        Args:
-            output_dir (str): 輸出目錄路徑，預設使用 ./jobs_csv
-            max_retries (int): 最大重試次數
-            retry_delay (int): 重試等待時間(秒)
-        """
-        self.logger = logging.getLogger(__name__)
+    def __init__(self, max_retries=3, retry_delay=5, chunk_id=None):
+        """初始化爬蟲類"""
+        self.logger = logging.getLogger(f"{__name__}_{chunk_id}" if chunk_id else __name__)
         self.setup_logging()
         
         self.today = date.today()
-        # 使用新的目錄路徑
+        # 直接使用chunk_id作為檔案名稱的一部分
+        self.chunk_id = chunk_id
         self.output_dir = Path("/opt/airflow/jobs_csv")
-        
-        # 自動創建目錄
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        logging.info(f"Output directory path: {self.output_dir}")
-
+        # os.chmod(self.output_dir, 0o755)
+        
         self.max_retries = max_retries
         self.retry_delay = retry_delay
-        
         self.session = self.create_retry_session(retries=self.max_retries, 
-                                                 backoff_factor=self.retry_delay)
-        self.headers = self.get_random_headers()
-        logging.info(f"初始化完成，輸出目錄: {self.output_dir}")
-
+                                               backoff_factor=self.retry_delay)
+        
     def setup_logging(self):
         """設置日誌配置"""
         logging.basicConfig(
@@ -140,8 +126,11 @@ class JobScraper:
     def scrape_jobs(self, key_txt, batch_size=30):
         """爬取工作信息並保存到CSV"""
         key = quote(key_txt)
-        path_csv = self.output_dir / f"{self.today}_{key_txt}_104人力銀行.csv"
-        logging.info(f"開始爬取關鍵字: {key_txt}")
+        # 簡化檔案名稱格式
+        filename = f"chunk_{self.chunk_id}_{key_txt}.csv"
+        path_csv = self.output_dir / filename
+        
+        logging.info(f"開始爬取關鍵字: {key_txt}, 輸出檔案: {path_csv}")
 
         # 創建CSV文件並寫入標題
         with open(path_csv, mode='a+', newline='', encoding='utf-8') as employee_file:
@@ -198,7 +187,7 @@ class JobScraper:
                             industry = title_1.select('.info-company-addon-type.text-gray-darker.font-weight-bold')[0].get_text()
                             industry = industry if "業" in industry else "無"
 
-                            # 爬取工作網址內的內容
+                            # 取工作網址內的內容
                             detail_soup = self.read_url(title_url)
                             introduction, tools, skills, job_categories, major_requirement, other_requirements = self.extract_job_details(detail_soup)
 
@@ -217,7 +206,7 @@ class JobScraper:
                                     employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                                 employee_writer.writerow(row)
                         except Exception as e:
-                            logging.error(f"處理職位資訊時發生錯誤: {e}")
+                            logging.error(f"處理職位資訊發生錯誤: {e}")
                             continue
                 
                 # 每批次完成後短暫休息
@@ -284,7 +273,7 @@ class JobScraper:
                         data_block = row.select_one('div.col.p-0.list-row__data')
 
                         if data_block:
-                            if "擅長工具" in header_text:
+                            if "擅常工具" in header_text:
                                 tools = [u.get_text().strip() for u in data_block.select('a.tools u')]
                             elif "工作技能" in header_text:
                                 skills = [u.get_text().strip() for u in data_block.select('a.skills u')]
@@ -311,37 +300,50 @@ class JobScraper:
             # 發生錯誤時返回預設值
             return "未提供工作內容", "不拘", "不拘", "未指定", "未指定", "不拘"
 
-def web_crawler(key_texts_chunk=None):
-    """
-    執行爬蟲任務
-    Args:
-        key_texts_chunk: 要處理的關鍵字列表子集
-    """
+def web_crawler(key_texts_chunk, chunk_index, **context):
+    """執行爬蟲任務"""
+    if not key_texts_chunk:
+        raise ValueError("未提供關鍵字列表")
+        
+    logging.info(f"Chunk {chunk_index} 開始處理關鍵字: {key_texts_chunk}")
+    
     try:
-        # 使用預設的 ./jobs_csv 路徑
-        scraper = JobScraper(max_retries=3, retry_delay=5)
+        # 創建帶有chunk_id的scraper實例
+        scraper = JobScraper(max_retries=3, retry_delay=5, chunk_id=chunk_index)
+        results = []
         
-        # 如果沒有提供特定的關鍵字組，使用完整列表的第一組
-        keywords_to_process = key_texts_chunk if key_texts_chunk else split_keywords(max_keywords_per_chunk=5)[0]
-        
-        for key_txt in keywords_to_process:
+        for i, key_txt in enumerate(key_texts_chunk):
             try:
-                # 為每個關鍵字設置處理超時
-                with timeout(minutes=60):  # 增加單個關鍵字處理超時時間
-                    scraper.scrape_jobs(key_txt)
-                    logging.info(f"成功處理關鍵字: {key_txt}")
+                # 添加進度日誌
+                logging.info(f"處理進度: {i+1}/{len(key_texts_chunk)} - 關鍵字: {key_txt}")
+                
+                scraper.scrape_jobs(key_txt)
+                results.append({
+                    'keyword': key_txt,
+                    'status': 'success',
+                    'timestamp': datetime.now().isoformat()
+                })
+                
+                # 添加詳細日誌
+                logging.info(f"Chunk {chunk_index} 成功處理關鍵字: {key_txt}")
                     
-            except TimeoutError:
-                logging.error(f"處理關鍵字 {key_txt} 超時")
             except Exception as e:
-                logging.error(f"處理關鍵字 {key_txt} 時發生錯誤: {str(e)}")
+                error_msg = f"Chunk {chunk_index} 處理關鍵字 {key_txt} 時發生錯誤: {str(e)}"
+                logging.error(error_msg)
+                results.append({
+                    'keyword': key_txt,
+                    'status': 'error',
+                    'error': str(e),
+                    'timestamp': datetime.now().isoformat()
+                })
                 continue
                 
-        logging.info(f"關鍵字組爬蟲完成: {keywords_to_process}")
+        return results
         
     except Exception as e:
-        logging.error(f"主程序執行錯誤: {str(e)}")
-        raise
+        error_msg = f"Chunk {chunk_index} 執行錯誤: {str(e)}"
+        logging.error(error_msg)
+        raise AirflowException(error_msg)
 
 if __name__ == "__main__":
     web_crawler()
