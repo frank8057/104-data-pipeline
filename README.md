@@ -8,7 +8,8 @@ An automated ETL pipeline for collecting and analyzing job market data from 104 
 <pre>
 /airflow
 ├── dags/               # Airflow DAG definitions
-│   └── test.py         # Main workflow
+│   ├── test.py         # Main workflow
+│   └── dbt_refresh_dag.py  # DBT refresh workflow
 ├── tasks/              # Task modules
 │   ├── __init__.py
 │   ├── bigquery_load.py # BigQuery data loading
@@ -23,6 +24,9 @@ An automated ETL pipeline for collecting and analyzing job market data from 104 
 ├── data/               # Data storage
 │   └── 104data.cleaning.csv # Cleaned data
 ├── .gitignore          # Git ignore rules
+├── dbt_project/        # DBT project files
+│   ├── models/         # DBT models
+│   └── dbt_project.yml # DBT config
 └── README.md           # Project documentation
 </pre>
 
@@ -36,6 +40,7 @@ An automated ETL pipeline for collecting and analyzing job market data from 104 
 | 🧹 Clean   | Data Cleaning               | `data_clean.py`      |
 | ☁️ Upload  | GCS Upload                  | `gcs_upload.py`      |
 | 🗄️ Load    | BigQuery Load               | `bigquery_load.py`   |
+| 🔄 Transform| DBT Data Transformation     | `dbt_refresh_dag.py` |
 | 📊 Visualize | Data Analysis & Visualization | -               |
 
 
@@ -55,6 +60,7 @@ An automated ETL pipeline for collecting and analyzing job market data from 104 
   - 📊 BigQuery: Data warehousing
 - 🕷 BeautifulSoup4: Web parsing
 - 🐼 Pandas: Data processing
+- 🔄 DBT: Data transformation
 
 ## 🚀 Getting Started
 
@@ -80,6 +86,13 @@ pip install -r requirements.txt
 3. Configure GCP credentials:
 \`\`\`bash
 export GOOGLE_APPLICATION_CREDENTIALS="your-credentials.json"
+\`\`\`
+
+4. Configure DBT:
+\`\`\`bash
+cd airflow/dbt_project
+dbt deps
+dbt debug
 \`\`\`
 
 ### System Startup
@@ -117,6 +130,12 @@ airflow scheduler
 - **Data Warehouse Integration**: Loads data into BigQuery for advanced querying and analysis.
 - **Query Optimization**: Implements partitioning and indexing strategies for efficient data retrieval.
 
+### 4️⃣ Data Transformation
+- **DBT Models**: Uses DBT for data modeling and transformation
+  - **Incremental Processing**: Handles incremental data loads
+  - **Data Quality Tests**: Implements data quality checks
+  - **Documentation**: Auto-generates data documentation
+
 ## 📈 Monitoring
 
 ### DAG Overview
@@ -140,6 +159,10 @@ airflow scheduler
 - **BigQuery Load Task**:
   - **Function**: Loads processed data into BigQuery for analysis.
   - **Execution Timeout**: Set to 2 hours to handle large data volumes.
+
+- **DBT Transform Task**:
+  - **Function**: Runs DBT models for data transformation
+  - **Execution Timeout**: Set to 1 hour to handle large data volumes
 
 ### Logging and Error Handling
 - **Logging**: 
@@ -219,6 +242,8 @@ airflow scheduler
 - google-cloud-bigquery >= 3.11.0
 - beautifulsoup4 >= 4.12.0
 - requests >= 2.31.0
+- dbt-core >= 1.5.0
+- dbt-bigquery >= 1.5.0
 
 ### System Requirements
 - Linux/macOS/Windows WSL2
@@ -245,6 +270,10 @@ airflow scheduler
   - GCP integration
   - Airflow DAG setup
   - BigQuery warehouse integration
+- 2024/11: v1.1
+  - Added DBT integration
+  - Enhanced data transformation pipeline
+  - Improved documentation
 
 ## 🤝 Contributing
 Contributions are welcome!
