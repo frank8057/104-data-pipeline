@@ -23,13 +23,14 @@ class DataProcessor:
         self.output_file = '104data.cleaning.csv'
         
         # 確保目錄存在並有正確權限
-        for directory in [self.input_dir, self.output_dir]:
-            try:
-                directory.mkdir(parents=True, exist_ok=True)
-                os.chmod(directory, 0o777)
-            except Exception as e:
-                logging.error(f"創建目錄失敗 {directory}: {e}")
-                raise
+        try:
+            directory = '/opt/airflow/jobs_csv'
+            if not os.path.exists(directory):
+                os.makedirs(directory, mode=0o777, exist_ok=True)
+            # 移除 chmod 操作，因為我們已經在 Dockerfile 中設置了權限
+        except Exception as e:
+            logging.error(f"創建目錄失敗 {directory}: {str(e)}")
+            raise
         self.resources = self.load_resources()
         logging.info(f"初始化完成，輸入目錄: {self.input_dir}")
 
@@ -211,7 +212,7 @@ class DataProcessor:
                 
                 logging.info("薪資欄位處理完成")
 
-            # 替換不需要的特殊字元
+            # 換不需要的特殊字元
             special_chars = {
                 r'\(': '', r'\)': '',
                 r'\【': '', r'\】': '',
@@ -237,6 +238,7 @@ class DataProcessor:
                 "薪資": "salary",
                 "地區": "location_region",
                 "經歷": "experience",
+                "學歷": "education",
                 "產業別": "industry",
                 '工作網址': 'job_url',
                 "工作技能": "job_skills",
@@ -254,7 +256,7 @@ class DataProcessor:
                 "report_date", "job_title", "company_name",
                 "main_category", "sub_category", "job_category", 
                 "salary", "location_region", "experience",
-                "industry", "job_url", "job_skills", "tools", "source"
+                "education", "industry", "job_url", "job_skills", "tools", "source"
             ]
             
             # 重新排序欄位

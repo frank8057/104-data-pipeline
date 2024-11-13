@@ -10,6 +10,9 @@ __pycache__/
 webserver_config.py
 airflow-webserver.pid
 standalone_admin_password.txt
+keys/
+*.json
+.dbt/
 
 # 專案特定文件
 data/
@@ -23,6 +26,8 @@ htmlcov/
 plugins
 config
 .config
+dbt_packages/
+
 # IDE 相關
 .vscode/
 .idea/
@@ -71,6 +76,7 @@ build/
 dist/
 *.egg
 *.egg-info/
+*.yml
 
 # 測試相關
 .tox/
@@ -81,6 +87,12 @@ coverage.xml
 .pytest_cache/
 .lesshst
 .bashrc
+airflow-scheduler.err
+airflow-scheduler.log
+airflow-webserver.err
+airflow-webserver.log
+airflow-scheduler.pid
+airflow-scheduler.out
 
 # 文檔相關
 docs/_build/

@@ -9,6 +9,8 @@ import os
 from dotenv import load_dotenv
 import json
 import time
+import sys
+sys.path.append('/opt/airflow')
 
 # 添加父目錄到 Python 路徑
 current_dir = Path(__file__).resolve().parent
