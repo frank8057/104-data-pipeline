@@ -1,16 +1,15 @@
-# 使用官方的 Airflow 镜像作为基础镜像
 FROM apache/airflow:2.10.2-python3.8
 
-# 设置 UID 和 GID
+# 設定 UID 和 GID
 ARG AIRFLOW_UID=1005
 ARG AIRFLOW_GID=0  # GID 设置为 0，使用 root 组
 
 USER root
 
-# 设置 airflow 用户的 UID 和 GID，使用现有的 root 组 (GID 0)
+# 設置 airflow 用户的 UID 和 GID，使用现有的 root 组 (GID 0)
 RUN usermod -u ${AIRFLOW_UID} -g ${AIRFLOW_GID} airflow
 
-# 安装必要的依赖项
+# 安装必要的依賴
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     wget \
@@ -25,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y --no-install-recommends google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# 创建所有必要目录并设置权限
+# 創建所有必要目錄並設置權限
 RUN mkdir -p /opt/airflow/{dags,logs,plugins,config,jobs_csv,data,resources,tasks,dbt_project/logs,.dbt,keys,dbt_project/dbt_packages,dbt_project/target} \
     && chown -R airflow:root /opt/airflow \
     && chmod -R 755 /opt/airflow \
@@ -39,15 +38,15 @@ RUN mkdir -p /opt/airflow/{dags,logs,plugins,config,jobs_csv,data,resources,task
     && chmod -R 777 /opt/airflow/.dbt \
     && chmod -R 777 /opt/airflow/keys
 
-# 确保 Python 路径正确
+# 確保 Python 路徑正確
 ENV PYTHONPATH="/opt/airflow:/opt/airflow/tasks:/opt/airflow/dags:${PYTHONPATH}"
 
-# 复制文件并设置正确的权限
+# 複製文件並設置正確的權限
 COPY --chown=airflow:root requirements.txt /opt/airflow/
 COPY --chown=airflow:root tasks/ /opt/airflow/tasks/
 COPY --chown=airflow:root dags/ /opt/airflow/dags/
 
-# 确保 tasks 目录中的所有文件都有正确的权限
+# 確保 tasks 目錄中的所有文件都有正確的權限
 RUN chown -R airflow:root /opt/airflow/tasks \
     && chmod -R 755 /opt/airflow/tasks \
     && touch /opt/airflow/tasks/__init__.py \
@@ -62,6 +61,6 @@ RUN touch /opt/airflow/dbt_project/logs/dbt.log \
 # 切換到 airflow 用戶以進行後續操作
 USER airflow
 
-# 安装 Python 依赖
+# 安装 Python 依賴
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt \
     && pip install dbt-bigquery
