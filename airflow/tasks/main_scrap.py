@@ -57,22 +57,6 @@ def split_keywords(max_keywords_per_chunk=5):
         logging.error(f"分割關鍵字時發生錯誤: {str(e)}")
         raise
 
-@contextmanager
-def timeout(minutes=1):
-    """Context manager for timing out a block of code"""
-    def timeout_handler(signum, frame):
-        raise TimeoutError(f"Operation timed out after {minutes} minutes")
-        
-    # Set the timeout handler
-    signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(int(minutes * 60))
-    
-    try:
-        yield
-    finally:
-        # Disable the alarm
-        signal.alarm(0)
-
 class JobScraper:
     def __init__(self, max_retries=3, retry_delay=5, chunk_id=None):
         """初始化爬蟲類"""
@@ -100,11 +84,11 @@ class JobScraper:
             encoding='utf-8'
         )
 
-    def get_random_headers(self):
-        """返回HTTP頭"""
-        return {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0',
-        }
+    # def get_random_headers(self):
+    #     """返回HTTP頭"""
+    #     return {
+    #         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0',
+    #     }
 
     def get_total_pages(self, key):
         """獲取總頁數"""
@@ -227,21 +211,20 @@ class JobScraper:
             logging.error(f"讀取URL失敗: {e}")
             return None
 
-    @staticmethod
-    def create_retry_session(retries=5, backoff_factor=0.5):  # 增加重試次數和等待時間
-        """創建具有重試機制的會話"""
-        retry_strategy = Retry(
-            total=retries,
-            backoff_factor=backoff_factor,
-            status_forcelist=[429, 500, 502, 503, 504],
-            allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT", "DELETE"],
-            respect_retry_after_header=True
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        session = requests.Session()
-        session.mount("https://", adapter)
-        session.mount("http://", adapter)
-        return session
+    # def create_retry_session(retries=5, backoff_factor=0.5):  # 增加重試次數和等待時間
+    #     """創建具有重試機制的會話"""
+    #     retry_strategy = Retry(
+    #         total=retries,
+    #         backoff_factor=backoff_factor,
+    #         status_forcelist=[429, 500, 502, 503, 504],
+    #         allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT", "DELETE"],
+    #         respect_retry_after_header=True
+    #     )
+    #     adapter = HTTPAdapter(max_retries=retry_strategy)
+    #     session = requests.Session()
+    #     session.mount("https://", adapter)
+    #     session.mount("http://", adapter)
+    #     return session
 
     def extract_job_details(self, detail_soup):
         """從詳細頁面提取工作細節"""
