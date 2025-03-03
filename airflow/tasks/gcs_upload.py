@@ -23,7 +23,6 @@ class GCSUploader:
         )
         self.logger = logging.getLogger(__name__)
     
-    @retry.Retry(predicate=retry.if_exception_type(Exception))
     def upload_file(self, source_file_path, destination_blob_name=None):
         try:
             client = storage.Client(project=self.project_id)
